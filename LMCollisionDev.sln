@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMCollisionDev", "LMCollisionDev\LMCollisionDev.csproj", "{26DDED3A-5A9B-415B-8031-934C97EF0D01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+		Net20-Release|Any CPU = Net20-Release|Any CPU
+		Net20-Debug|Any CPU = Net20-Debug|Any CPU
+		Net45-Release|Any CPU = Net45-Release|Any CPU
+		Net45-Debug|Any CPU = Net45-Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Debug|x86.ActiveCfg = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Debug|x86.Build.0 = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Release|x86.ActiveCfg = Release|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Release|x86.Build.0 = Release|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net20-Release|Any CPU.ActiveCfg = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net20-Release|Any CPU.Build.0 = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net20-Debug|Any CPU.ActiveCfg = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net20-Debug|Any CPU.Build.0 = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net45-Release|Any CPU.ActiveCfg = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net45-Release|Any CPU.Build.0 = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net45-Debug|Any CPU.ActiveCfg = Debug|x86
+		{26DDED3A-5A9B-415B-8031-934C97EF0D01}.Net45-Debug|Any CPU.Build.0 = Debug|x86
+	EndGlobalSection
+EndGlobal
