@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenTK;
 using GameFormatReader.Common;
 using Assimp;
+using Newtonsoft.Json;
 
 namespace LMCollisionDev
 {
@@ -10,15 +11,28 @@ namespace LMCollisionDev
 	{
 		public struct CollisionProperties
 		{
-			int ColMaterial;
-			bool IsLadder;
-			bool IgnorePointer;
+			public enum CollisionMaterials
+			{
+				Normal,
+				Ice,
+				Unused1,
+				Unused2
+			}
+
+			public CollisionMaterials ColMaterial;
+			public bool IsLadder;
+			public bool IgnorePointer;
 		}
 
 		public struct SoundProperties
 		{
-			int SndMaterial;
-			int SndEchoSwitch;
+			public enum SoundMaterials
+			{
+				dummy
+			}
+
+			public SoundMaterials SndMaterial;
+			public int SndEchoSwitch;
 		}
 
 		public List<int> VertexIndices { get; private set; }
@@ -80,6 +94,22 @@ namespace LMCollisionDev
 			PlaneDValue = 50.0f;
 			Unknown1 = 0x8000;
 			Unknown2 = 0;
+		}
+
+		[JsonConstructor]
+		public Triangle(List<int> VertexIndices, int NormalIndex, int TangentIndex, int BinormalIndex, int Unknown1Index, int PlanePointIndex, float PlaneDValue, int Unknown1, int Unknown2, CollisionProperties ColProperties, SoundProperties SndProperties)
+		{
+			this.VertexIndices = VertexIndices;
+			this.NormalIndex = NormalIndex;
+			this.TangentIndex = TangentIndex;
+			this.BinormalIndex = BinormalIndex;
+			this.Unknown1Index = Unknown1Index;
+			this.PlanePointIndex = PlanePointIndex;
+			this.PlaneDValue = PlaneDValue;
+			this.Unknown1 = Unknown1;
+			this.Unknown2 = Unknown2;
+			this.ColProperties = ColProperties;
+			this.SndProperties = SndProperties;
 		}
 
 		public void WriteCompiledTriangle(EndianBinaryWriter writer)

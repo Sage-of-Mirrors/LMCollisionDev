@@ -39,6 +39,9 @@
     <Reference Include="EndianBinaryStreams">
       <HintPath>..\..\..\..\Github\BMDCubed\BMDCubed\lib\EndianBinaryStreams.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

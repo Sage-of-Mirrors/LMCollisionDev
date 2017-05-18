@@ -5,6 +5,7 @@ using System.Diagnostics;
 using OpenTK;
 using Assimp;
 using GameFormatReader.Common;
+using Newtonsoft.Json;
 
 namespace LMCollisionDev
 {
@@ -108,7 +109,25 @@ namespace LMCollisionDev
 
 		private void m_OpenJson(string fileName)
 		{
-			
+			using (StreamReader strmReader = File.OpenText(fileName))
+			{
+				using (JsonTextReader jsonReader = new JsonTextReader(strmReader))
+				{
+					jsonReader.SupportMultipleContent = true;
+
+					JsonSerializer srl = new JsonSerializer();
+					jsonReader.Read();
+					List<Vector3D> simpleVerts = srl.Deserialize<List<Vector3D>>(jsonReader);
+					foreach (Vector3D vec in simpleVerts)
+						Vertexes.Add(Util.Vec3DToVec3(vec));
+					jsonReader.Read();
+					List<Vector3D> simpleNrms = srl.Deserialize<List<Vector3D>>(jsonReader);
+					foreach (Vector3D vec in simpleNrms)
+						Normals.Add(Util.Vec3DToVec3(vec));
+					jsonReader.Read();
+					Triangles = srl.Deserialize<List<Triangle>>(jsonReader);
+				}
+			}
 		}
 
 		private void m_OpenModelFile(string fileName)

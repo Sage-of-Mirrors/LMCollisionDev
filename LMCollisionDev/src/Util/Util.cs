@@ -11,6 +11,11 @@ namespace LMCollisionDev
 			return new Vector3(assimpVec.X, assimpVec.Y, assimpVec.Z);
 		}
 
+		public static Vector3D Vec3ToVec3D(Vector3 openTKVec)
+		{
+			return new Vector3D(openTKVec.X, openTKVec.Y, openTKVec.Z);
+		}
+
 		public static Vector3 GetSurfaceNormal(Vector3 v1, Vector3 v2, Vector3 v3)
 		{
 			Vector3 p1 = v2 - v1;

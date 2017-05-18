@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using OpenTK;
 using GameFormatReader.Common;
+using Newtonsoft.Json;
+using Assimp;
 
 namespace LMCollisionDev
 {
@@ -89,6 +91,33 @@ namespace LMCollisionDev
 
 		private void SaveJson(string fileName)
 		{
+			StringWriter strWriter = new StringWriter();
+
+			JsonSerializer ser = new JsonSerializer();
+			//ser.Converters.Add(J
+
+			List<Vector3D> simpleVerts = new List<Vector3D>();
+			foreach (Vector3 vec in Vertexes)
+				simpleVerts.Add(Util.Vec3ToVec3D(vec));
+			
+			string vertexes = JsonConvert.SerializeObject(simpleVerts, Formatting.Indented);
+			strWriter.Write(vertexes);
+
+			List<Vector3D> simpleNrms = new List<Vector3D>();
+			foreach (Vector3 vec in Normals)
+				simpleNrms.Add(Util.Vec3ToVec3D(vec));
+
+			string normals = JsonConvert.SerializeObject(simpleNrms, Formatting.Indented);
+			strWriter.Write(normals);
+
+			string triangles = JsonConvert.SerializeObject(Triangles, Formatting.Indented);
+			strWriter.Write(triangles);
+
+			using (FileStream strm = new FileStream(fileName, FileMode.Create))
+			{
+				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+				writer.Write(strWriter.ToString().ToCharArray());
+			}
 		}
 
 		private void SaveObj(string fileName)
