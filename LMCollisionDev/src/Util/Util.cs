@@ -1,6 +1,7 @@
 ﻿using System;
 using Assimp;
 using OpenTK;
+using GameFormatReader.Common;
 
 namespace LMCollisionDev
 {
@@ -36,6 +37,45 @@ namespace LMCollisionDev
 		public static Vector3 GetBinormalVector(Vector3 normal, Vector3 tangent)
 		{
 			return Vector3.Cross(normal, tangent).Normalized();
+		}
+
+		public static uint CalculateHash(string input)
+		{
+			return CalculateHash(System.Text.Encoding.ASCII.GetBytes(input.ToCharArray()));
+		}
+
+		public static uint CalculateHash(byte[] data)
+		{
+			if (data == null)
+			{
+				throw new ArgumentNullException("data");
+			}
+
+			// this code is so shitty
+			uint hash = 0;
+			for (int i = 0; i < data.Length; ++i)
+			{
+				hash <<= 8;
+				hash += data[i];
+				var r6 = unchecked((uint)((4993ul * hash) >> 32));
+				var r0 = unchecked((byte)((((hash - r6) / 2) + r6) >> 24));
+				hash -= r0 * 33554393u;
+			}
+			return hash;
+		}
+
+		public static void PadStream(EndianBinaryWriter writer, int padVal)
+		{
+			// Pad up to a 32 byte alignment
+			// Formula: (x + (n-1)) & ~(n-1)
+			long nextAligned = (writer.BaseStream.Length + (padVal - 1)) & ~(padVal - 1);
+
+			long delta = nextAligned - writer.BaseStream.Length;
+			writer.BaseStream.Position = writer.BaseStream.Length;
+			for (int i = 0; i < delta; i++)
+			{
+				writer.Write((byte)0x40);
+			}
 		}
 	}
 }

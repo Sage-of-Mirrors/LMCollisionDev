@@ -51,6 +51,8 @@
     <Compile Include="src\Util\Util.cs" />
     <Compile Include="src\Collision\Triangle.cs" />
     <Compile Include="src\Collision\Collision_Output.cs" />
+    <Compile Include="src\jmp\Jmp.cs" />
+    <Compile Include="src\jmp\HashEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -60,6 +62,7 @@
     <Folder Include="src\" />
     <Folder Include="src\Collision\" />
     <Folder Include="src\Util\" />
+    <Folder Include="src\jmp\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.3.3.2\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.3.3.2\build\AssimpNet.targets')" />

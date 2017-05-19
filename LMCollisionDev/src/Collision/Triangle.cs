@@ -9,7 +9,7 @@ namespace LMCollisionDev
 {
 	public class Triangle
 	{
-		public struct CollisionProperties
+		public class CollisionProperties
 		{
 			public enum CollisionMaterials
 			{
@@ -24,7 +24,7 @@ namespace LMCollisionDev
 			public bool IgnorePointer;
 		}
 
-		public struct SoundProperties
+		public class SoundProperties
 		{
 			public enum SoundMaterials
 			{
@@ -50,11 +50,15 @@ namespace LMCollisionDev
 
 		public Triangle()
 		{
+			ColProperties = new CollisionProperties();
+			SndProperties = new SoundProperties();
 			VertexIndices = new List<int>();
 		}
 
 		public Triangle(EndianBinaryReader reader)
 		{
+			ColProperties = new CollisionProperties();
+			SndProperties = new SoundProperties();
 			VertexIndices = new List<int>();
 			VertexIndices.AddRange(new int[] { (int)reader.ReadInt16(), (int)reader.ReadInt16(), (int)reader.ReadInt16() });
 
@@ -70,6 +74,8 @@ namespace LMCollisionDev
 
 		public Triangle(Face face, List<Vector3> vertexes, List<Vector3> normals)
 		{
+			ColProperties = new CollisionProperties();
+			SndProperties = new SoundProperties();
 			VertexIndices = new List<int>();
 			VertexIndices = face.Indices;
 
@@ -112,6 +118,21 @@ namespace LMCollisionDev
 			this.SndProperties = SndProperties;
 		}
 
+		public void ReadCompiledColProperties(EndianBinaryReader reader)
+		{
+			int bitField = reader.ReadInt32();
+			ColProperties.ColMaterial = (CollisionProperties.CollisionMaterials)(bitField & 3);
+			ColProperties.IsLadder = Convert.ToBoolean(((bitField & 4) >> 2));
+			ColProperties.IgnorePointer = Convert.ToBoolean(((bitField & 8) >> 3));
+		}
+
+		public void ReadCompiledSndProperties(EndianBinaryReader reader)
+		{
+			int bitField = reader.ReadInt32();
+			SndProperties.SndMaterial = (SoundProperties.SoundMaterials)(bitField & 0xF);
+			SndProperties.SndEchoSwitch = (bitField & 0x70) >> 4;
+		}
+
 		public void WriteCompiledTriangle(EndianBinaryWriter writer)
 		{
 			writer.Write((ushort)VertexIndices[0]);
@@ -125,6 +146,28 @@ namespace LMCollisionDev
 			writer.Write(PlaneDValue);
 			writer.Write((ushort)Unknown1);
 			writer.Write((ushort)Unknown2);
+		}
+
+		public void WriteCompiledColProperties(EndianBinaryWriter writer)
+		{
+			uint bitField = 0;
+
+			uint ignorePointer = Convert.ToUInt32(ColProperties.IgnorePointer);
+			bitField |= (uint)(ignorePointer << 3);
+
+			uint isLadder = Convert.ToUInt32(ColProperties.IsLadder);
+			bitField |= (uint)(isLadder << 2);
+
+			bitField |= (uint)ColProperties.ColMaterial;
+			writer.Write(bitField);
+		}
+
+		public void WriteCompiledSndProperties(EndianBinaryWriter writer)
+		{
+			uint bitField = 0;
+			bitField |= (uint)(SndProperties.SndEchoSwitch << 4);
+			bitField |= (uint)(SndProperties.SndMaterial);
+			writer.Write(bitField);
 		}
 	}
 }

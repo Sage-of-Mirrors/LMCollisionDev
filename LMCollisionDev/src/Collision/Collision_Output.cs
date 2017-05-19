@@ -87,6 +87,71 @@ namespace LMCollisionDev
 					tri.WriteCompiledTriangle(writer);
 				}
 			}
+
+			string jmpFolderName = $"{ Path.GetDirectoryName(fileName) }\\jmp";
+
+			if (!Directory.Exists(jmpFolderName))
+				Directory.CreateDirectory(jmpFolderName);
+
+			string colPropertiesFileName = $"{ jmpFolderName }\\polygoninfo";
+			using (FileStream strm = new FileStream(colPropertiesFileName, FileMode.Create, FileAccess.Write))
+			{
+				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+
+				m_WriteCompiledColPropertiesHeader(writer);
+
+				foreach (Triangle tri in Triangles)
+					tri.WriteCompiledColProperties(writer);
+				Util.PadStream(writer, 32);
+			}
+
+			string sndPropertiesFileName = $"{ jmpFolderName }\\soundpolygoninfo";
+			using (FileStream strm = new FileStream(sndPropertiesFileName, FileMode.Create, FileAccess.Write))
+			{
+				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+
+				m_WriteCompiledSndPropertiesHeader(writer);
+
+				foreach (Triangle tri in Triangles)
+					tri.WriteCompiledSndProperties(writer);
+				Util.PadStream(writer, 32);
+			}
+		}
+
+		private void m_WriteCompiledColPropertiesHeader(EndianBinaryWriter writer)
+		{
+			writer.Write(Triangles.Count);
+			writer.Write((int)3);
+			writer.Write((int)0x34);
+			writer.Write((int)4);
+
+			writer.Write((int)0x002AAF7F);
+			writer.Write((int)3);
+			writer.Write((int)0);
+
+			writer.Write((int)0x01C2B94A);
+			writer.Write((int)4);
+			writer.Write((int)0x200);
+
+			writer.Write((int)0x00AF2BA5);
+			writer.Write((int)8);
+			writer.Write((int)0x300);
+		}
+
+		private void m_WriteCompiledSndPropertiesHeader(EndianBinaryWriter writer)
+		{
+			writer.Write(Triangles.Count);
+			writer.Write((int)2);
+			writer.Write((int)0x28);
+			writer.Write((int)4);
+
+			writer.Write((int)0x006064D7);
+			writer.Write((int)0xF);
+			writer.Write((int)0);
+
+			writer.Write((int)0x005169FA);
+			writer.Write((int)0x70);
+			writer.Write((int)0x400);
 		}
 
 		private void SaveJson(string fileName)
@@ -99,7 +164,7 @@ namespace LMCollisionDev
 			List<Vector3D> simpleVerts = new List<Vector3D>();
 			foreach (Vector3 vec in Vertexes)
 				simpleVerts.Add(Util.Vec3ToVec3D(vec));
-			
+
 			string vertexes = JsonConvert.SerializeObject(simpleVerts, Formatting.Indented);
 			strWriter.Write(vertexes);
 
