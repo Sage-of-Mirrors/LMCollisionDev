@@ -56,8 +56,24 @@ namespace LMCollisionDev
 				writer.Write((int)0); // Placeholder for ??? data offset
 				writer.Write((int)0); // Placeholder for ??? data offset
 
+				List<Vector3> vertexExport = new List<Vector3>();
+				foreach (Triangle tri in Triangles)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						Vector3 vec = Vertexes[tri.VertexIndices[i]];
+
+						if (!vertexExport.Contains(vec))
+						{
+							vertexExport.Add(vec);
+						}
+
+						tri.VertexIndices[i] = vertexExport.IndexOf(vec);
+					}
+				}
+
 				// Write vertexes
-				foreach (Vector3 vec in Vertexes)
+				foreach (Vector3 vec in vertexExport)
 				{
 					writer.Write(vec.X);
 					writer.Write(vec.Y);
@@ -69,8 +85,38 @@ namespace LMCollisionDev
 				writer.Write((int)writer.BaseStream.Length);
 				writer.Seek(0, SeekOrigin.End);
 
+				List<Vector3> normalsExport = new List<Vector3>();
+				foreach (Triangle tri in Triangles)
+				{
+					Vector3 normal = Normals[tri.NormalIndex];
+					if (!normalsExport.Contains(normal))
+						normalsExport.Add(normal);
+					tri.NormalIndex = normalsExport.IndexOf(normal);
+
+					Vector3 edge1 = Normals[tri.Edge1TangentIndex];
+					Vector3 neg = -edge1;
+					if (!normalsExport.Contains(-edge1))
+						normalsExport.Add(-edge1);
+					tri.Edge1TangentIndex = normalsExport.IndexOf(-edge1);
+
+					Vector3 edge2 = Normals[tri.Edge2TangentIndex];
+					if (!normalsExport.Contains(edge2))
+						normalsExport.Add(edge2);
+					tri.Edge2TangentIndex = normalsExport.IndexOf(edge2);
+
+					Vector3 edge3 = Normals[tri.Edge3TangentIndex];
+					if (!normalsExport.Contains(edge3))
+						normalsExport.Add(edge3);
+					tri.Edge3TangentIndex = normalsExport.IndexOf(edge3);
+
+					Vector3 unk1 = Normals[tri.PlanePointIndex];
+					if (!normalsExport.Contains(-unk1))
+						normalsExport.Add(-unk1);
+					tri.PlanePointIndex = normalsExport.IndexOf(-unk1);
+				}
+
 				// Write normals
-				foreach (Vector3 vec in Normals)
+				foreach (Vector3 vec in normalsExport)
 				{
 					writer.Write(vec.X);
 					writer.Write(vec.Y);
@@ -86,6 +132,8 @@ namespace LMCollisionDev
 				{
 					tri.WriteCompiledTriangle(writer);
 				}
+
+				Util.PadStream(writer, 32);
 			}
 
 			string jmpFolderName = $"{ Path.GetDirectoryName(fileName) }\\jmp";

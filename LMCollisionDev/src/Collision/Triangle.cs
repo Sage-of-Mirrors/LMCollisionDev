@@ -36,11 +36,11 @@ namespace LMCollisionDev
 		}
 
 		public List<int> VertexIndices { get; private set; }
-		public int NormalIndex { get; private set; }
-		public int TangentIndex { get; private set; }
-		public int BinormalIndex { get; private set; }
-		public int Unknown1Index { get; private set; }
-		public int PlanePointIndex { get; private set; }
+		public int NormalIndex { get; set; }
+		public int Edge1TangentIndex { get; set; }
+		public int Edge2TangentIndex { get; set; }
+		public int Edge3TangentIndex { get; set; }
+		public int PlanePointIndex { get; set; }
 		public float PlaneDValue { get; private set; }
 		public int Unknown1 { get; private set; }
 		public int Unknown2 { get; private set; }
@@ -63,9 +63,9 @@ namespace LMCollisionDev
 			VertexIndices.AddRange(new int[] { (int)reader.ReadInt16(), (int)reader.ReadInt16(), (int)reader.ReadInt16() });
 
 			NormalIndex = (int)reader.ReadInt16();
-			TangentIndex = (int)reader.ReadInt16();
-			BinormalIndex = (int)reader.ReadInt16();
-			Unknown1Index = (int)reader.ReadInt16();
+			Edge1TangentIndex = (int)reader.ReadInt16();
+			Edge2TangentIndex = (int)reader.ReadInt16();
+			Edge3TangentIndex = (int)reader.ReadInt16();
 			PlanePointIndex = (int)reader.ReadInt16();
 			PlaneDValue = reader.ReadSingle();
 			Unknown1 = (int)reader.ReadInt16();
@@ -79,27 +79,44 @@ namespace LMCollisionDev
 			VertexIndices = new List<int>();
 			VertexIndices = face.Indices;
 
-			// Get normal
-			NormalIndex = normals.Count;
-			normals.Add(Util.GetSurfaceNormal(
-				vertexes[VertexIndices[0]],
-				vertexes[VertexIndices[1]],
-				vertexes[VertexIndices[2]]));
+			Vector3[] vertexData = new Vector3[3];
+			vertexData[0] = vertexes[VertexIndices[0]];
+			vertexData[1] = vertexes[VertexIndices[1]];
+			vertexData[2] = vertexes[VertexIndices[2]];
+			m_GetNormalTangentData(vertexData, normals);
 
-			// Get tangent
-			TangentIndex = normals.Count;
-			normals.Add(Util.GetTangentVector(normals[NormalIndex]));
-
-			// Get binormal
-			BinormalIndex = normals.Count;
-			normals.Add(Util.GetBinormalVector(normals[NormalIndex], normals[TangentIndex]));
-
-			// Dunno
-			Unknown1Index = 0;
-			PlanePointIndex = TangentIndex;
-			PlaneDValue = 50.0f;
 			Unknown1 = 0x8000;
 			Unknown2 = 0;
+		}
+
+		private void m_GetNormalTangentData(Vector3[] vertexes, List<Vector3> normals)
+		{
+			Vector3 edge10 = vertexes[1] - vertexes[0];
+			Vector3 edge20 = vertexes[2] - vertexes[0];
+
+			Vector3 edge01 = vertexes[0] - vertexes[1];
+			Vector3 edge21 = vertexes[2] - vertexes[1];
+
+			Vector3 normal1 = Vector3.Cross(edge10, edge20).Normalized();
+			Vector3 normal2 = Vector3.Cross(edge01, edge21).Normalized();
+			Vector3 edge1Tan = Vector3.Cross(normal1, edge10).Normalized();
+			Vector3 edge2Tan = Vector3.Cross(normal1, edge20).Normalized();
+			Vector3 edge3Tan = Vector3.Cross(normal2, edge21).Normalized();
+
+			NormalIndex = normals.Count;
+			normals.Add(normal1);
+
+			Edge1TangentIndex = normals.Count;
+			normals.Add(edge1Tan);
+			Edge2TangentIndex = normals.Count;
+			normals.Add(edge2Tan);
+			Edge3TangentIndex = normals.Count;
+			normals.Add(edge3Tan);
+
+			PlanePointIndex = normals.Count;
+			normals.Add(edge1Tan);
+
+			PlaneDValue = Vector3.Dot(edge3Tan, edge10);
 		}
 
 		[JsonConstructor]
@@ -107,9 +124,9 @@ namespace LMCollisionDev
 		{
 			this.VertexIndices = VertexIndices;
 			this.NormalIndex = NormalIndex;
-			this.TangentIndex = TangentIndex;
-			this.BinormalIndex = BinormalIndex;
-			this.Unknown1Index = Unknown1Index;
+			this.Edge1TangentIndex = TangentIndex;
+			this.Edge2TangentIndex = BinormalIndex;
+			this.Edge3TangentIndex = Unknown1Index;
 			this.PlanePointIndex = PlanePointIndex;
 			this.PlaneDValue = PlaneDValue;
 			this.Unknown1 = Unknown1;
@@ -139,9 +156,9 @@ namespace LMCollisionDev
 			writer.Write((ushort)VertexIndices[1]);
 			writer.Write((ushort)VertexIndices[2]);
 			writer.Write((ushort)NormalIndex);
-			writer.Write((ushort)TangentIndex);
-			writer.Write((ushort)BinormalIndex);
-			writer.Write((ushort)Unknown1Index);
+			writer.Write((ushort)Edge1TangentIndex);
+			writer.Write((ushort)Edge2TangentIndex);
+			writer.Write((ushort)Edge3TangentIndex);
 			writer.Write((ushort)PlanePointIndex);
 			writer.Write(PlaneDValue);
 			writer.Write((ushort)Unknown1);

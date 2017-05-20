@@ -21,22 +21,53 @@ namespace LMCollisionDev
 		{
 			Vector3 p1 = v2 - v1;
 			Vector3 p2 = v3 - v1;
+			Vector3 nrm1 = Vector3.Cross(p1, p2).Normalized();
+
+			Vector3 fromP1 = Vector3.Cross(nrm1, p1).Normalized();
+			Vector3 fromP2 = Vector3.Cross(nrm1, p2).Normalized();
+
+			Vector3 p3 = v1 - v2;
+			Vector3 p4 = v3 - v2;
+			Vector3 nrm2 = Vector3.Cross(p3, p4).Normalized();
+
+			Vector3 fromP3 = Vector3.Cross(nrm2, p3).Normalized();
+			Vector3 fromP4 = Vector3.Cross(nrm2, p4).Normalized();
+
+			Vector3 p5 = v1 - v3;
+			Vector3 p6 = v2 - v3;
+			Vector3 nrm3 = Vector3.Cross(p5, p6).Normalized();
+
+			Vector3 tan_from_3 = Vector3.Cross(nrm3, v3);
+			tan_from_3.NormalizeFast();
+
+			Vector3 testssss = Vector3.Cross(fromP1, p4);
+
+			Console.WriteLine(nrm1);
+			Console.WriteLine(fromP1);
+			Console.WriteLine(fromP2);
+			Console.WriteLine(fromP4);
+			Console.WriteLine(testssss.Normalized());
+			Console.WriteLine(Vector3.Dot(p1, fromP4));
+			Console.WriteLine();
+
 			return Vector3.Cross(p1, p2).Normalized();
 		}
 
 		public static Vector3 GetTangentVector(Vector3 normal)
 		{
 			Vector3 t1 = Vector3.Cross(normal, Vector3.UnitY);
+			t1.NormalizeFast();
 			Vector3 t2 = Vector3.Cross(normal, Vector3.UnitZ);
+			t2.NormalizeFast();
 			if (t1.Length > t2.Length)
-				return t1.Normalized();
+				return t1;
 			else
-				return t2.Normalized();
+				return t2;
 		}
 
 		public static Vector3 GetBinormalVector(Vector3 normal, Vector3 tangent)
 		{
-			return Vector3.Cross(normal, tangent).Normalized();
+			return Vector3.Cross(tangent, normal);
 		}
 
 		public static uint CalculateHash(string input)

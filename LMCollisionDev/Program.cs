@@ -7,8 +7,8 @@ namespace LMCollisionDev
 	{
 		public static void Main(string[] args)
 		{
-			Collision col = new Collision(@"D:\SZS Tools\Luigi's Mansion\SpaceCats\col.mp");
-			col.SaveFile(@"D:\SZS Tools\Luigi's Mansion\SpaceCats\col.obj", Collision.FileType.Obj);
+Collision col = new Collision(@"D:\Dropbox\Public\Collision Tutorial Utilities\Lunaboy's RARC Tools\map13\col.mp");
+			//col.SaveFile(@"D:\Dropbox\Public\Collision Tutorial Utilities\Lunaboy's RARC Tools\map13\col.mp", Collision.FileType.Compiled);
 		}
 	}
 }

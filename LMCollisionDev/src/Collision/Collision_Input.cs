@@ -103,6 +103,14 @@ namespace LMCollisionDev
 				for (int i = 0; i < numFaces; i++)
 				{
 					Triangles.Add(new Triangle(reader));
+
+					Console.WriteLine(Normals[Triangles[i].NormalIndex]);
+					Console.WriteLine(Normals[Triangles[i].Edge1TangentIndex]);
+					Console.WriteLine(Normals[Triangles[i].Edge2TangentIndex]);
+					Console.WriteLine(Normals[Triangles[i].Edge3TangentIndex]);
+					Console.WriteLine(Normals[Triangles[i].PlanePointIndex]);
+					Console.WriteLine(Triangles[i].PlaneDValue);
+					Console.WriteLine();
 				}
 			}
 
