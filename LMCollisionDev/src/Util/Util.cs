@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Assimp;
 using OpenTK;
 using GameFormatReader.Common;

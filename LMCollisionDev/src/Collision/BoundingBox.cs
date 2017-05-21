@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,13 +101,24 @@ namespace LMCollisionDev
 
         public void WriteBoundingBox(EndianBinaryWriter writer)
         {
+			Vector3 testMinBounds = new Vector3(Minimum.X - 100f, Minimum.Y - 100f, Minimum.Z - 100f);
+			writer.Write(testMinBounds.X);
+            writer.Write(testMinBounds.Y);
+            writer.Write(testMinBounds.Z);
+
+			Vector3 range = new Vector3((Maximum.X + 100) - testMinBounds.X, (Maximum.Y + 100) - testMinBounds.Y, (Maximum.Z + 100) - testMinBounds.Z);
+			writer.Write(range.X);
+            writer.Write(range.Y);
+            writer.Write(range.Z);
+
+			/*
             writer.Write(Minimum.X);
             writer.Write(Minimum.Y);
             writer.Write(Minimum.Z);
 
             writer.Write(Maximum.X);
             writer.Write(Maximum.Y);
-            writer.Write(Maximum.Z);
+            writer.Write(Maximum.Z);*/
         }
     }
 }
