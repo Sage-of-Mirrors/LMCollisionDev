@@ -13,6 +13,7 @@ namespace LMCollisionDev
     {
         public Vector3 Minimum;
         public Vector3 Maximum;
+		public Vector3 AxisLengths;
         Vector3 Center;
         public float SphereRadius;
 
@@ -64,9 +65,10 @@ namespace LMCollisionDev
                     minZ = vec.Z;
             }
 
-            Maximum = new Vector3(maxX, maxY, maxZ);
+            Maximum = new Vector3(maxX + 100, maxY + 100, maxZ + 100);
 
-            Minimum = new Vector3(minX, minY, minZ);
+            Minimum = new Vector3(minX - 100, minY - 100, minZ - 100);
+			AxisLengths = new Vector3((Maximum.X) - Minimum.X, (Maximum.Y) - Minimum.Y, (Maximum.Z) - Minimum.Z);
             #endregion
 
             #region Center
@@ -101,15 +103,13 @@ namespace LMCollisionDev
 
         public void WriteBoundingBox(EndianBinaryWriter writer)
         {
-			Vector3 testMinBounds = new Vector3(Minimum.X - 100f, Minimum.Y - 100f, Minimum.Z - 100f);
-			writer.Write(testMinBounds.X);
-            writer.Write(testMinBounds.Y);
-            writer.Write(testMinBounds.Z);
+			writer.Write(Minimum.X);
+            writer.Write(Minimum.Y);
+            writer.Write(Minimum.Z);
 
-			Vector3 range = new Vector3((Maximum.X + 100) - testMinBounds.X, (Maximum.Y + 100) - testMinBounds.Y, (Maximum.Z + 100) - testMinBounds.Z);
-			writer.Write(range.X);
-            writer.Write(range.Y);
-            writer.Write(range.Z);
+			writer.Write(AxisLengths.X);
+            writer.Write(AxisLengths.Y);
+            writer.Write(AxisLengths.Z);
 
 			/*
             writer.Write(Minimum.X);

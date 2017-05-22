@@ -52,6 +52,84 @@ namespace LMCollisionDev
 			}
 
 			BBox = new BoundingBox(Vertexes);
+			m_GenerateGrid();
+		}
+
+		private void m_GenerateGrid()
+		{
+			int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256));
+			int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512));
+			int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+
+			float xCellSize = BBox.AxisLengths.X / xCellCount;
+			float yCellSize = BBox.AxisLengths.Y / yCellCount;
+			float zCellSize = BBox.AxisLengths.Z / zCellCount;
+
+			float curX = BBox.Minimum.X;
+			float curY = BBox.Minimum.Y;
+			float curZ = BBox.Minimum.Z;
+
+			StringWriter wrtr = new StringWriter();
+
+			for (int i = 0; i <= xCellCount; i++)
+			{
+				for (int j = 0; j <= yCellCount; j++)
+				{
+					for (int k = 0; k <= zCellCount; k++)
+					{
+						wrtr.WriteLine($"v { curX } { curY } { curZ }");
+
+						curZ += zCellSize;
+					}
+
+					curZ = BBox.Minimum.Z;
+					curY += yCellSize;
+				}
+
+				/*
+				wrtr.WriteLine($"v { curX } { curY } { curZ }");
+				wrtr.WriteLine($"v { curX + xCellSize } { curY } { curZ }");
+				wrtr.WriteLine($"v { curX } { curY + yCellSize } { curZ }");
+				wrtr.WriteLine($"v { curX } { curY } { curZ + zCellSize }");
+				wrtr.WriteLine($"v { curX + xCellSize } { curY + yCellSize } { curZ }");
+				wrtr.WriteLine($"v { curX + xCellSize } { curY } { curZ + zCellSize }");
+				wrtr.WriteLine($"v { curX } { curY + yCellSize } { curZ + zCellSize }");
+				wrtr.WriteLine($"v { curX + xCellSize } { curY + yCellSize } { curZ + zCellSize }");
+				*/
+
+				curY = BBox.Minimum.Y;
+				curX += xCellSize;
+			}
+
+			/*
+			for (int i = 0; i < xCellCount + yCellCount + zCellCount; i++)
+			{
+				wrtr.WriteLine($"o { i }");
+
+				wrtr.WriteLine($"f { (i * 8) + 1 } { (i * 8) + 2 } { (i * 8) + 3 }");
+				wrtr.WriteLine($"f { (i * 8) + 2 } { (i * 8) + 5 } { (i * 8) + 3 }");
+
+				wrtr.WriteLine($"f { (i * 8) + 4 } { (i * 8) + 1 } { (i * 8) + 3 }");
+				wrtr.WriteLine($"f { (i * 8) + 4 } { (i * 8) + 3 } { (i * 8) + 7 }");
+
+				wrtr.WriteLine($"f { (i * 8) + 2 } { (i * 8) + 5 } { (i * 8) + 6 }");
+				wrtr.WriteLine($"f { (i * 8) + 6 } { (i * 8) + 5 } { (i * 8) + 8 }");
+
+				wrtr.WriteLine($"f { (i * 8) + 6 } { (i * 8) + 4 } { (i * 8) + 7 }");
+				wrtr.WriteLine($"f { (i * 8) + 6 } { (i * 8) + 7 } { (i * 8) + 8 }");
+
+				wrtr.WriteLine($"f { (i * 8) + 5 } { (i * 8) + 3 } { (i * 8) + 7 }");
+				wrtr.WriteLine($"f { (i * 8) + 5 } { (i * 8) + 7 } { (i * 8) + 8 }");
+
+				wrtr.WriteLine($"f { (i * 8) + 1 } { (i * 8) + 2 } { (i * 8) + 6 }");
+				wrtr.WriteLine($"f { (i * 8) + 1 } { (i * 8) + 6 } { (i * 8) + 4 }");
+			}*/
+
+			using (FileStream strm = new FileStream(@"D:\SZS Tools\Luigi's Mansion\ManGrid.obj", FileMode.Create, FileAccess.Write))
+			{
+				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+				writer.Write(wrtr.ToString().ToCharArray());
+			}
 		}
 
 		private void m_OpenCompiled(string fileName)
@@ -104,13 +182,14 @@ namespace LMCollisionDev
 				{
 					Triangles.Add(new Triangle(reader));
 
+					/*
 					Console.WriteLine(Normals[Triangles[i].NormalIndex]);
 					Console.WriteLine(Normals[Triangles[i].Edge1TangentIndex]);
 					Console.WriteLine(Normals[Triangles[i].Edge2TangentIndex]);
 					Console.WriteLine(Normals[Triangles[i].Edge3TangentIndex]);
 					Console.WriteLine(Normals[Triangles[i].PlanePointIndex]);
 					Console.WriteLine(Triangles[i].PlaneDValue);
-					Console.WriteLine();
+					Console.WriteLine();*/
 				}
 			}
 
