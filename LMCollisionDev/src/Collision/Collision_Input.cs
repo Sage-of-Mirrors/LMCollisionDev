@@ -52,13 +52,13 @@ namespace LMCollisionDev
 			}
 
 			BBox = new BoundingBox(Vertexes);
-			m_GenerateGrid();
+			m_GenerateGrid_Obj();
 		}
 
-		private void m_GenerateGrid()
+		private void m_GenerateGrid_Obj()
 		{
-			int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256));
-			int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512));
+			int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
+			int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
 			int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
 
 			float xCellSize = BBox.AxisLengths.X / xCellCount;
@@ -71,11 +71,11 @@ namespace LMCollisionDev
 
 			StringWriter wrtr = new StringWriter();
 
-			for (int i = 0; i <= xCellCount; i++)
+			for (int i = 0; i < xCellCount; i++)
 			{
-				for (int j = 0; j <= yCellCount; j++)
+				for (int j = 0; j < yCellCount; j++)
 				{
-					for (int k = 0; k <= zCellCount; k++)
+					for (int k = 0; k < zCellCount; k++)
 					{
 						wrtr.WriteLine($"v { curX } { curY } { curZ }");
 
@@ -169,6 +169,8 @@ namespace LMCollisionDev
 					Vertexes.Add(new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
 				}
 
+				BBox = new BoundingBox(Vertexes);
+
 				reader.BaseStream.Seek(normalDataOffset, SeekOrigin.Begin);
 
 				for (int i = 0; i < numNormals; i++)
@@ -190,6 +192,45 @@ namespace LMCollisionDev
 					Console.WriteLine(Normals[Triangles[i].PlanePointIndex]);
 					Console.WriteLine(Triangles[i].PlaneDValue);
 					Console.WriteLine();*/
+				}
+
+				reader.BaseStream.Seek(unk2DataOffset, SeekOrigin.Begin);
+
+				StringWriter strWriter = new StringWriter();
+
+				int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
+				int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
+				int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+
+				float xCellSize = BBox.AxisLengths.X / xCellCount;
+				float yCellSize = BBox.AxisLengths.Y / yCellCount;
+				float zCellSize = BBox.AxisLengths.Z / zCellCount;
+
+				for (int zCoord = 0; zCoord < zCellCount; zCoord++)
+				{
+					float zCoordActual = BBox.Minimum.Z + (zCoord * zCellSize);
+						
+					for (int yCoord = 0; yCoord < yCellCount; yCoord++)
+					{
+						float yCoordActual = BBox.Minimum.Y + (yCoord * yCellSize);
+
+						for (int xCoord = 0; xCoord < xCellCount; xCoord++)
+						{
+							float xCoordActual = BBox.Minimum.X + (xCoord * xCellSize);
+
+							int index1 = reader.ReadInt32();
+							int index2 = reader.ReadInt32();
+
+							if (index1 != 0 || index2 != 0)
+								strWriter.WriteLine($"v { xCoordActual } { yCoordActual } { zCoordActual }");
+						}
+					}
+				}
+
+				using (FileStream objOut = new FileStream(@"D:\SZS Tools\Luigi's Mansion\gridOut.obj", FileMode.Create, FileAccess.Write))
+				{
+					EndianBinaryWriter objWriter = new EndianBinaryWriter(objOut, Endian.Big);
+					objWriter.Write(strWriter.ToString().ToCharArray());
 				}
 			}
 

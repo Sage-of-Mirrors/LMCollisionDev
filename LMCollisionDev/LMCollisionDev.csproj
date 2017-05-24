@@ -51,6 +51,7 @@
     <Compile Include="src\Util\Util.cs" />
     <Compile Include="src\Collision\Triangle.cs" />
     <Compile Include="src\Collision\Collision_Output.cs" />
+    <Compile Include="src\Collision\GridCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -133,6 +133,65 @@ namespace LMCollisionDev
 					tri.WriteCompiledTriangle(writer);
 				}
 
+				int xCellCount, yCellCount, zCellCount;
+				List<GridCell> grid = m_GenerateGrid(out xCellCount, out yCellCount, out zCellCount);
+
+				List<short> allTriangleIndexesForGrid = new List<short>();
+				List<int> gridTriangleIndexes = new List<int>();
+				allTriangleIndexesForGrid.Add(-1);
+
+				for (int z = 0; z < zCellCount; z++)
+				{
+					for (int y = 0; y < yCellCount; y++)
+					{
+						for (int x = 0; x < xCellCount; x++)
+						{
+							int index = x + (y * xCellCount) + (z * xCellCount * yCellCount);
+
+							if (grid[index].AllIntersectingTris.Count != 0)
+							{
+								gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+								foreach (Triangle tri in grid[index].AllIntersectingTris)
+									allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
+								allTriangleIndexesForGrid.Add(-1);
+							}
+							else
+							{
+								gridTriangleIndexes.Add(0);
+							}
+
+							if (grid[index].FloorIntersectingTris.Count != 0)
+							{
+								gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+								foreach (Triangle tri in grid[index].FloorIntersectingTris)
+									allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
+								allTriangleIndexesForGrid.Add(-1);
+							}
+							else
+								gridTriangleIndexes.Add(0);
+						}
+					}
+				}
+
+				allTriangleIndexesForGrid.Add(-1);
+
+				// Write offset to triangle group data
+				writer.BaseStream.Seek(0x30, SeekOrigin.Begin);
+				writer.Write((int)writer.BaseStream.Length);
+				writer.Seek(0, SeekOrigin.End);
+
+				foreach (short shr in allTriangleIndexesForGrid)
+					writer.Write(shr);
+
+				// Write offset to grid indices (twice)
+				writer.BaseStream.Seek(0x34, SeekOrigin.Begin);
+				writer.Write((int)writer.BaseStream.Length);
+				writer.Write((int)writer.BaseStream.Length);
+				writer.Seek(0, SeekOrigin.End);
+
+				foreach (int inte in gridTriangleIndexes)
+					writer.Write(inte);
+
 				Util.PadStream(writer, 32);
 			}
 
@@ -153,6 +212,7 @@ namespace LMCollisionDev
 				Util.PadStream(writer, 32);
 			}
 
+
 			string sndPropertiesFileName = $"{ jmpFolderName }\\soundpolygoninfo";
 			using (FileStream strm = new FileStream(sndPropertiesFileName, FileMode.Create, FileAccess.Write))
 			{
@@ -164,6 +224,48 @@ namespace LMCollisionDev
 					tri.WriteCompiledSndProperties(writer);
 				Util.PadStream(writer, 32);
 			}
+		}
+
+		private List<GridCell> m_GenerateGrid(out int xCellCount, out int yCellCount, out int zCellCount)
+		{
+			List<GridCell> cells = new List<GridCell>();
+
+			xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
+			yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
+			zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+
+			float xCellSize = BBox.AxisLengths.X / xCellCount;
+			float yCellSize = BBox.AxisLengths.Y / yCellCount;
+			float zCellSize = BBox.AxisLengths.Z / zCellCount;
+
+			float curX = BBox.Minimum.X;
+			float curY = BBox.Minimum.Y;
+			float curZ = BBox.Minimum.Z;
+
+			for (int xCoord = 0; xCoord < xCellCount; xCoord++)
+			{
+				for (int yCoord = 0; yCoord < yCellCount; yCoord++)
+				{
+					for (int zCoord = 0; zCoord < zCellCount; zCoord++)
+					{
+						GridCell cell = new GridCell(new Vector3(curX, curY, curZ), new Vector3(curX + xCellSize, curY + yCellSize, curZ + zCellSize));
+						cells.Add(cell);
+
+						foreach (Triangle tri in Triangles)
+							cell.CheckTriangle(tri, Vertexes, Normals);
+
+						curZ += zCellSize;
+					}
+
+					curZ = BBox.Minimum.Z;
+					curY += yCellSize;
+				}
+
+				curY = BBox.Minimum.Y;
+				curX += xCellSize;
+			}
+
+			return cells;
 		}
 
 		private void m_WriteCompiledColPropertiesHeader(EndianBinaryWriter writer)
