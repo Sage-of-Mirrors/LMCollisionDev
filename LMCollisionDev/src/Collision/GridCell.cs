@@ -82,7 +82,7 @@ namespace LMCollisionDev
 					m_Project(boxVertices, axis, out boxMin, out boxMax);
 					m_Project(triVerts, axis, out triangleMin, out triangleMax);
 
-					if (boxMax <= triangleMin || boxMin >= triangleMax)
+					if (boxMax < triangleMin || boxMin > triangleMax)
 						return;
 				}
 			}

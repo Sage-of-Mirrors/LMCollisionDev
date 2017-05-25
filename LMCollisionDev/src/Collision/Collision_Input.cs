@@ -59,7 +59,7 @@ namespace LMCollisionDev
 		{
 			int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
 			int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
-			int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+			int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256) + 1);
 
 			float xCellSize = BBox.AxisLengths.X / xCellCount;
 			float yCellSize = BBox.AxisLengths.Y / yCellCount;
@@ -71,18 +71,18 @@ namespace LMCollisionDev
 
 			StringWriter wrtr = new StringWriter();
 
-			for (int i = 0; i < xCellCount; i++)
+			for (int k = 0; k <= zCellCount; k++)
 			{
-				for (int j = 0; j < yCellCount; j++)
+				for (int j = 0; j <= yCellCount; j++)
 				{
-					for (int k = 0; k < zCellCount; k++)
+					for (int i = 0; i <= xCellCount; i++)
 					{
 						wrtr.WriteLine($"v { curX } { curY } { curZ }");
 
-						curZ += zCellSize;
+						curX += xCellSize;
 					}
 
-					curZ = BBox.Minimum.Z;
+					curX = BBox.Minimum.X;
 					curY += yCellSize;
 				}
 
@@ -98,7 +98,7 @@ namespace LMCollisionDev
 				*/
 
 				curY = BBox.Minimum.Y;
-				curX += xCellSize;
+				curZ += zCellSize;
 			}
 
 			/*
@@ -198,33 +198,39 @@ namespace LMCollisionDev
 
 				StringWriter strWriter = new StringWriter();
 
-				int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
-				int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
-				int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+				int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256.0f) + 1);
+				int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512.0f) + 1);
+				int zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256.0f) + 1);
 
 				float xCellSize = BBox.AxisLengths.X / xCellCount;
 				float yCellSize = BBox.AxisLengths.Y / yCellCount;
 				float zCellSize = BBox.AxisLengths.Z / zCellCount;
 
+				float curX = BBox.Minimum.X;
+				float curY = BBox.Minimum.Y;
+				float curZ = BBox.Minimum.Z;
+
 				for (int zCoord = 0; zCoord < zCellCount; zCoord++)
 				{
-					float zCoordActual = BBox.Minimum.Z + (zCoord * zCellSize);
-						
 					for (int yCoord = 0; yCoord < yCellCount; yCoord++)
 					{
-						float yCoordActual = BBox.Minimum.Y + (yCoord * yCellSize);
-
 						for (int xCoord = 0; xCoord < xCellCount; xCoord++)
 						{
-							float xCoordActual = BBox.Minimum.X + (xCoord * xCellSize);
-
 							int index1 = reader.ReadInt32();
 							int index2 = reader.ReadInt32();
 
-							if (index1 != 0 || index2 != 0)
-								strWriter.WriteLine($"v { xCoordActual } { yCoordActual } { zCoordActual }");
+							if (index1 != 0 && index2 != 0)
+								strWriter.WriteLine($"v { curX } { curY } { curZ }");
+
+							curX += xCellSize;
 						}
+
+						curX = BBox.Minimum.X;
+						curY += yCellSize;
 					}
+
+					curY = BBox.Minimum.Y;
+					curZ += zCellSize;
 				}
 
 				using (FileStream objOut = new FileStream(@"D:\SZS Tools\Luigi's Mansion\gridOut.obj", FileMode.Create, FileAccess.Write))

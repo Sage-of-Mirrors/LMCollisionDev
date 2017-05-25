@@ -134,12 +134,13 @@ namespace LMCollisionDev
 				}
 
 				int xCellCount, yCellCount, zCellCount;
-				List<GridCell> grid = m_GenerateGrid(out xCellCount, out yCellCount, out zCellCount);
+				List<GridCell> grid = m_GenerateGrid(out xCellCount, out yCellCount, out zCellCount, vertexExport, normalsExport);
 
 				List<short> allTriangleIndexesForGrid = new List<short>();
 				List<int> gridTriangleIndexes = new List<int>();
 				allTriangleIndexesForGrid.Add(-1);
 
+				/*
 				for (int z = 0; z < zCellCount; z++)
 				{
 					for (int y = 0; y < yCellCount; y++)
@@ -151,18 +152,18 @@ namespace LMCollisionDev
 							if (grid[index].AllIntersectingTris.Count != 0)
 							{
 								gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+
 								foreach (Triangle tri in grid[index].AllIntersectingTris)
 									allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
 								allTriangleIndexesForGrid.Add(-1);
 							}
 							else
-							{
 								gridTriangleIndexes.Add(0);
-							}
 
 							if (grid[index].FloorIntersectingTris.Count != 0)
 							{
 								gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+
 								foreach (Triangle tri in grid[index].FloorIntersectingTris)
 									allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
 								allTriangleIndexesForGrid.Add(-1);
@@ -171,6 +172,30 @@ namespace LMCollisionDev
 								gridTriangleIndexes.Add(0);
 						}
 					}
+				}*/
+
+
+				foreach (GridCell cell in grid)
+				{
+					if (cell.AllIntersectingTris.Count != 0)
+					{
+						gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+						foreach (Triangle tri in cell.AllIntersectingTris)
+							allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
+						allTriangleIndexesForGrid.Add(-1);
+					}
+					else
+						gridTriangleIndexes.Add(0);
+
+					if (cell.FloorIntersectingTris.Count != 0)
+					{
+						gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+						foreach (Triangle tri in cell.FloorIntersectingTris)
+							allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
+						allTriangleIndexesForGrid.Add(-1);
+					}
+					else
+						gridTriangleIndexes.Add(0);
 				}
 
 				allTriangleIndexesForGrid.Add(-1);
@@ -226,13 +251,13 @@ namespace LMCollisionDev
 			}
 		}
 
-		private List<GridCell> m_GenerateGrid(out int xCellCount, out int yCellCount, out int zCellCount)
+		private List<GridCell> m_GenerateGrid(out int xCellCount, out int yCellCount, out int zCellCount, List<Vector3> vertexExport, List<Vector3> normalExport)
 		{
 			List<GridCell> cells = new List<GridCell>();
 
-			xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
-			yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
-			zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256));
+			xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256.0f) + 1);
+			yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512.0f) + 1);
+			zCellCount = (int)(Math.Floor(BBox.AxisLengths.Z / 256.0f) + 1);
 
 			float xCellSize = BBox.AxisLengths.X / xCellCount;
 			float yCellSize = BBox.AxisLengths.Y / yCellCount;
@@ -242,27 +267,30 @@ namespace LMCollisionDev
 			float curY = BBox.Minimum.Y;
 			float curZ = BBox.Minimum.Z;
 
-			for (int xCoord = 0; xCoord < xCellCount; xCoord++)
+			for (int zCoord = 0; zCoord < zCellCount; zCoord++)
 			{
 				for (int yCoord = 0; yCoord < yCellCount; yCoord++)
 				{
-					for (int zCoord = 0; zCoord < zCellCount; zCoord++)
+					for (int xCoord = 0; xCoord < xCellCount; xCoord++)
 					{
 						GridCell cell = new GridCell(new Vector3(curX, curY, curZ), new Vector3(curX + xCellSize, curY + yCellSize, curZ + zCellSize));
 						cells.Add(cell);
 
-						foreach (Triangle tri in Triangles)
-							cell.CheckTriangle(tri, Vertexes, Normals);
+						for (int i = 0; i < Triangles.Count; i++)
+						{
+							cell.CheckTriangle(Triangles[i], vertexExport, normalExport);
+						}
+							
 
-						curZ += zCellSize;
+						curX += xCellSize;
 					}
 
-					curZ = BBox.Minimum.Z;
+					curX = BBox.Minimum.X;
 					curY += yCellSize;
 				}
 
 				curY = BBox.Minimum.Y;
-				curX += xCellSize;
+				curZ += zCellSize;
 			}
 
 			return cells;
