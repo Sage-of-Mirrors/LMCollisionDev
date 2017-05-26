@@ -180,18 +180,26 @@ namespace LMCollisionDev
 
 				reader.BaseStream.Seek(faceDataOffset, SeekOrigin.Begin);
 
+				StringWriter statWriter = new StringWriter();
+
 				for (int i = 0; i < numFaces; i++)
 				{
 					Triangles.Add(new Triangle(reader));
 
-					/*
-					Console.WriteLine(Normals[Triangles[i].NormalIndex]);
-					Console.WriteLine(Normals[Triangles[i].Edge1TangentIndex]);
-					Console.WriteLine(Normals[Triangles[i].Edge2TangentIndex]);
-					Console.WriteLine(Normals[Triangles[i].Edge3TangentIndex]);
-					Console.WriteLine(Normals[Triangles[i].PlanePointIndex]);
-					Console.WriteLine(Triangles[i].PlaneDValue);
-					Console.WriteLine();*/
+
+					statWriter.WriteLine(Normals[Triangles[i].NormalIndex]);
+					statWriter.WriteLine(Normals[Triangles[i].Edge1TangentIndex]);
+					statWriter.WriteLine(Normals[Triangles[i].Edge2TangentIndex]);
+					statWriter.WriteLine(Normals[Triangles[i].Edge3TangentIndex]);
+					statWriter.WriteLine(Normals[Triangles[i].PlanePointIndex]);
+					statWriter.WriteLine(Triangles[i].PlaneDValue);
+					statWriter.WriteLine();
+				}
+
+				using (FileStream objOut = new FileStream(@"D:\SZS Tools\Luigi's Mansion\stats_custom.txt", FileMode.Create, FileAccess.Write))
+				{
+					EndianBinaryWriter objWriter = new EndianBinaryWriter(objOut, Endian.Big);
+					objWriter.Write(statWriter.ToString().ToCharArray());
 				}
 
 				reader.BaseStream.Seek(unk2DataOffset, SeekOrigin.Begin);
@@ -219,8 +227,8 @@ namespace LMCollisionDev
 							int index1 = reader.ReadInt32();
 							int index2 = reader.ReadInt32();
 
-							if (index1 != 0 && index2 != 0)
-								strWriter.WriteLine($"v { curX } { curY } { curZ }");
+							if (index1 != 0 || index2 != 0)
+								strWriter.WriteLine($"v { curX + (xCellSize / 2) } { curY + (yCellSize / 2) } { curZ + (zCellSize / 2)}");
 
 							curX += xCellSize;
 						}

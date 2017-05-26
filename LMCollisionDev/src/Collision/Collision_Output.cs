@@ -140,7 +140,7 @@ namespace LMCollisionDev
 				List<int> gridTriangleIndexes = new List<int>();
 				allTriangleIndexesForGrid.Add(-1);
 
-				/*
+
 				for (int z = 0; z < zCellCount; z++)
 				{
 					for (int y = 0; y < yCellCount; y++)
@@ -157,6 +157,20 @@ namespace LMCollisionDev
 									allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
 								allTriangleIndexesForGrid.Add(-1);
 							}
+							else if (y > 0)
+							{
+								int prevIndex = x + ((y - 1) * xCellCount) + (z * xCellCount * yCellCount);
+
+								if (grid[prevIndex].AllIntersectingTris.Count != 0)
+								{
+									gridTriangleIndexes.Add(allTriangleIndexesForGrid.Count);
+									foreach (Triangle tri in grid[prevIndex].AllIntersectingTris)
+										allTriangleIndexesForGrid.Add((short)Triangles.IndexOf(tri));
+									allTriangleIndexesForGrid.Add(-1);
+								}
+								else
+									gridTriangleIndexes.Add(0);
+							}
 							else
 								gridTriangleIndexes.Add(0);
 
@@ -172,9 +186,9 @@ namespace LMCollisionDev
 								gridTriangleIndexes.Add(0);
 						}
 					}
-				}*/
+				}
 
-
+				/*
 				foreach (GridCell cell in grid)
 				{
 					if (cell.AllIntersectingTris.Count != 0)
@@ -196,7 +210,7 @@ namespace LMCollisionDev
 					}
 					else
 						gridTriangleIndexes.Add(0);
-				}
+				}*/
 
 				allTriangleIndexesForGrid.Add(-1);
 
@@ -274,13 +288,12 @@ namespace LMCollisionDev
 					for (int xCoord = 0; xCoord < xCellCount; xCoord++)
 					{
 						GridCell cell = new GridCell(new Vector3(curX, curY, curZ), new Vector3(curX + xCellSize, curY + yCellSize, curZ + zCellSize));
-						cells.Add(cell);
 
-						for (int i = 0; i < Triangles.Count; i++)
+						for (int i = Triangles.Count - 1; i >= 0; i--)
 						{
-							cell.CheckTriangle(Triangles[i], vertexExport, normalExport);
+							cell.CheckTriangleBoundingBox(Triangles[i], vertexExport, normalExport);
 						}
-							
+						cells.Add(cell);
 
 						curX += xCellSize;
 					}

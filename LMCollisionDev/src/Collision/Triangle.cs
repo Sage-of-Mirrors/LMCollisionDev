@@ -98,6 +98,7 @@ namespace LMCollisionDev
 			Vector3 edge21 = vertexes[2] - vertexes[1];
 
 			Vector3 normal1 = Vector3.Cross(edge10, edge20).Normalized();
+			//normal1 = new Vector3((float)Math.Round(normal1.X), (float)Math.Round(normal1.Y), (float)Math.Round(normal1.Z));
 			Vector3 normal2 = Vector3.Cross(edge01, edge21).Normalized();
 			Vector3 edge1Tan = Vector3.Cross(normal1, edge10).Normalized();
 			Vector3 edge2Tan = Vector3.Cross(normal1, edge20).Normalized();
@@ -114,7 +115,20 @@ namespace LMCollisionDev
 			normals.Add(edge3Tan);
 
 			PlanePointIndex = normals.Count;
-			normals.Add(edge1Tan);
+
+			Vector3 upAxis = Vector3.UnitY;
+
+			float numerator = Vector3.Dot(normal1, upAxis);
+			float denomenator = normal1.Length * upAxis.Length;
+			float angle = (float)Math.Acos(numerator / denomenator);
+
+			angle *= (float)(180 / Math.PI);
+			if (Math.Abs(angle) == 0.0f)
+			{
+				normals.Add(edge1Tan);
+			}
+			else
+				normals.Add(Vector3.Zero);
 
 			PlaneDValue = Vector3.Dot(edge3Tan, edge10);
 		}

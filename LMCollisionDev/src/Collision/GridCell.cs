@@ -94,6 +94,29 @@ namespace LMCollisionDev
 				FloorIntersectingTris.Add(tri);
 		}
 
+		public void CheckTriangleBoundingBox(Triangle tri, List<Vector3> vertexes, List<Vector3> normals)
+		{
+			BoundingBox triBounds = new BoundingBox(new List<Vector3>() { vertexes[tri.VertexIndices[0]], vertexes[tri.VertexIndices[1]], vertexes[tri.VertexIndices[2]] });
+			Vector3 triCenter = (triBounds.Maximum + triBounds.Minimum) / 2;
+			Vector3 triHalfWidth = (triBounds.Maximum - triBounds.Minimum) / 2;
+
+			Vector3 boxCenter = (Bounds.Maximum + Bounds.Minimum) / 2;
+			Vector3 boxHalfWidth = (Bounds.Maximum - Bounds.Minimum) / 2;
+
+			if (Math.Abs(triCenter.X - boxCenter.X) > (triHalfWidth.X + boxHalfWidth.X))
+				return;
+			if (Math.Abs(triCenter.Y - boxCenter.Y) > (triHalfWidth.Y + boxHalfWidth.Y))
+				return;
+			if (Math.Abs(triCenter.Z - boxCenter.Z) > (triHalfWidth.Z + boxHalfWidth.Z))
+				return;
+
+			// If we got here, there is an intersection
+			AllIntersectingTris.Add(tri);
+
+			if (m_IsFloor(normals[tri.NormalIndex]))
+				FloorIntersectingTris.Add(tri);
+		}
+
 		private void m_Project(List<Vector3> verts, Vector3 axis, out float min, out float max)
 		{
 			min = float.PositiveInfinity;
@@ -115,9 +138,10 @@ namespace LMCollisionDev
 			float angle = (float)Math.Acos(numerator / denomenator);
 
 			angle *= (float)(180 / Math.PI);
+
 			if (Math.Abs(angle) < 65.0f)
 				return true;
-			
+
 			return false;
 		}
 
