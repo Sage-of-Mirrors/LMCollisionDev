@@ -52,6 +52,10 @@
     <Compile Include="src\Collision\Triangle.cs" />
     <Compile Include="src\Collision\Collision_Output.cs" />
     <Compile Include="src\Collision\GridCell.cs" />
+    <Compile Include="src\Collision\Models\Collision_AssImp.cs" />
+    <Compile Include="src\Collision\Models\Collision_Compiled.cs" />
+    <Compile Include="src\Collision\Models\Collision_Json.cs" />
+    <Compile Include="src\Collision\Collision_Debug.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -61,6 +65,7 @@
     <Folder Include="src\" />
     <Folder Include="src\Collision\" />
     <Folder Include="src\Util\" />
+    <Folder Include="src\Collision\Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.3.3.2\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.3.3.2\build\AssimpNet.targets')" />
