@@ -59,30 +59,30 @@ namespace LMCollisionDev
 
 				reader.BaseStream.Seek(faceDataOffset, SeekOrigin.Begin);
 
-				StringWriter statWriter = new StringWriter();
+				//StringWriter statWriter = new StringWriter();
 
 				for (int i = 0; i < numFaces; i++)
 				{
 					Triangles.Add(new Triangle(reader));
 
 
-					statWriter.WriteLine(NormalizedVectors[Triangles[i].NormalIndex]);
+					/*statWriter.WriteLine(NormalizedVectors[Triangles[i].NormalIndex]);
 					statWriter.WriteLine(NormalizedVectors[Triangles[i].Edge1TangentIndex]);
 					statWriter.WriteLine(NormalizedVectors[Triangles[i].Edge2TangentIndex]);
 					statWriter.WriteLine(NormalizedVectors[Triangles[i].Edge3TangentIndex]);
 					statWriter.WriteLine(NormalizedVectors[Triangles[i].PlanePointIndex]);
 					statWriter.WriteLine(Triangles[i].PlaneDValue);
-					statWriter.WriteLine();
+					statWriter.WriteLine();*/
 				}
 
-				using (FileStream objOut = new FileStream(@"D:\SZS Tools\Luigi's Mansion\stats_custom.txt", FileMode.Create, FileAccess.Write))
+				/*using (FileStream objOut = new FileStream(@"D:\SZS Tools\Luigi's Mansion\stats_custom.txt", FileMode.Create, FileAccess.Write))
 				{
 					EndianBinaryWriter objWriter = new EndianBinaryWriter(objOut, Endian.Big);
 					objWriter.Write(statWriter.ToString().ToCharArray());
-				}
+				}*/
 
 				reader.BaseStream.Seek(gridIndexData1Offset, SeekOrigin.Begin);
-				m_GenerateFilledCells(reader);
+				//m_GenerateFilledCells(reader);
 			}
 
 			string jmpFolderName = $"{ Path.GetDirectoryName(fileName) }\\jmp";
