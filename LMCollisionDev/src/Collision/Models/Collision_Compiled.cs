@@ -82,7 +82,6 @@ namespace LMCollisionDev
 				}*/
 
 				reader.BaseStream.Seek(gridIndexData1Offset, SeekOrigin.Begin);
-				//m_GenerateFilledCells(reader);
 			}
 
 			string jmpFolderName = $"{ Path.GetDirectoryName(fileName) }\\jmp";

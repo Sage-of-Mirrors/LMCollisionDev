@@ -42,6 +42,7 @@ namespace LMCollisionDev
 
 		private static void m_ShowHelpMessage()
 		{
+			Console.WriteLine();
 			Console.WriteLine("Luigi's Mansion Collision Converter written by Gamma/Sage of Mirrors.");
 			Console.WriteLine("For any questions or issues, go to the github repo or contact @SageOfMirrors on twitter.");
 			Console.WriteLine();

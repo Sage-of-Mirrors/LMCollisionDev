@@ -52,7 +52,6 @@ namespace LMCollisionDev
 			}
 
 			BBox = new BoundingBox(Vertices);
-			m_GenerateAllCells();
 		}
 	}
 }
