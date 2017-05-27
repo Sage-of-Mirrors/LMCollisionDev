@@ -96,7 +96,14 @@ namespace LMCollisionDev
 
 		public void CheckTriangleBoundingBox(Triangle tri, List<Vector3> vertexes, List<Vector3> normals)
 		{
-			BoundingBox triBounds = new BoundingBox(new List<Vector3>() { vertexes[tri.VertexIndices[0]], vertexes[tri.VertexIndices[1]], vertexes[tri.VertexIndices[2]] });
+			List<Vector3> triVerts = new List<Vector3>();
+			for (int i = 0; i < 3; i++)
+			{
+				Vector3 origVert = vertexes[tri.VertexIndices[i]];
+				triVerts.Add(new Vector3(origVert.X - 100, origVert.Y - 100, origVert.Z - 100));
+			}
+
+			BoundingBox triBounds = new BoundingBox(triVerts);
 			Vector3 triCenter = (triBounds.Maximum + triBounds.Minimum) / 2;
 			Vector3 triHalfWidth = (triBounds.Maximum - triBounds.Minimum) / 2;
 
