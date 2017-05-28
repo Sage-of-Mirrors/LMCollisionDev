@@ -9,14 +9,14 @@ namespace LMCollisionDev
 		{
 			if (args.Length == 0)
 			{
-				m_ShowHelpMessage();
+				ShowHelpMessage();
 				return;
 			}
 			if (args.Length % 2 != 0)
 			{
 				Console.WriteLine("There was a mis-match in the number of arguments. Please see the help message below...");
 				Console.WriteLine();
-				m_ShowHelpMessage();
+				ShowHelpMessage();
 				return;
 			}
 
@@ -24,7 +24,7 @@ namespace LMCollisionDev
 			string outputFile = "";
 			Collision.FileType outputType = Collision.FileType.none;
 
-			bool canOutput = m_CheckArgs(args, out inputFile, out outputFile, out outputType);
+			bool canOutput = CheckArgs(args, out inputFile, out outputFile, out outputType);
 
 			if (!canOutput)
 				return;
@@ -40,7 +40,7 @@ namespace LMCollisionDev
 			*/
 		}
 
-		private static void m_ShowHelpMessage()
+		private static void ShowHelpMessage()
 		{
 			Console.WriteLine();
 			Console.WriteLine("Luigi's Mansion Collision Converter written by Gamma/Sage of Mirrors.");
@@ -55,7 +55,7 @@ namespace LMCollisionDev
 			Console.WriteLine("\tObj:\t\tOutputs a Wavefront OBJ file based on the input model.");
 		}
 
-		private static bool m_CheckArgs(string[] args, out string inputFile, out string outputFile, out Collision.FileType outputType)
+		private static bool CheckArgs(string[] args, out string inputFile, out string outputFile, out Collision.FileType outputType)
 		{
 			inputFile = "";
 			outputFile = "";

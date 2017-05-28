@@ -41,13 +41,13 @@ namespace LMCollisionDev
 			switch (fileExt)
 			{
 				case ".mp": // We were passed compiled collision
-					m_OpenCompiled(fileName);
+					OpenCompiled(fileName);
 					break;
 				case ".json": // We were passed a json file
-					m_OpenJson(fileName);
+					OpenJson(fileName);
 					break;
 				default: // We may have been passed a model file or an incompatibile file, we'll check later
-					m_OpenModelFile(fileName);
+					OpenModelFile(fileName);
 					break;
 			}
 

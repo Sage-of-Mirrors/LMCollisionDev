@@ -83,13 +83,13 @@ namespace LMCollisionDev
 			vertexData[0] = vertexes[VertexIndices[0]];
 			vertexData[1] = vertexes[VertexIndices[1]];
 			vertexData[2] = vertexes[VertexIndices[2]];
-			m_GetNormalTangentData(vertexData, normals);
+			GetNormalTangentData(vertexData, normals);
 
 			Unknown1 = 0x8000;
 			Unknown2 = 0;
 		}
 
-		private void m_GetNormalTangentData(Vector3[] vertexes, List<Vector3> normals)
+		private void GetNormalTangentData(Vector3[] vertexes, List<Vector3> normals)
 		{
 			Vector3 edge10 = vertexes[1] - vertexes[0];
 			Vector3 edge20 = vertexes[2] - vertexes[0];
@@ -123,7 +123,7 @@ namespace LMCollisionDev
 			float angle = (float)Math.Acos(numerator / denomenator);
 
 			angle *= (float)(180 / Math.PI);
-			if (Math.Abs(angle) == 0.0f)
+			if (Math.Abs(angle) >= 0.0f && Math.Abs(angle) <= 0.5f)
 			{
 				normals.Add(edge1Tan);
 			}

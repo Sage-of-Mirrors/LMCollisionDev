@@ -46,7 +46,7 @@ namespace LMCollisionDev
 			for (int i = 0; i < 3; i++)
 			{
 				Vector3 n = boxNormals[i];
-				m_Project(triVerts, boxNormals[i], out triangleMin, out triangleMax);
+				Project(triVerts, boxNormals[i], out triangleMin, out triangleMax);
 
 				if (triangleMax < Bounds.Minimum[i] || triangleMin > Bounds.Maximum[i])
 					return;
@@ -64,7 +64,7 @@ namespace LMCollisionDev
 
 			float boxMin, boxMax;
 			float triangleOffset = Vector3.Dot(normal, triVerts[0]);
-			m_Project(boxVertices, normal, out boxMin, out boxMax);
+			Project(boxVertices, normal, out boxMin, out boxMax);
 
 			if (boxMax < triangleOffset || boxMin > triangleOffset)
 				return;
@@ -79,8 +79,8 @@ namespace LMCollisionDev
 				for (int j = 0; j < 3; j++)
 				{
 					Vector3 axis = Vector3.Cross(triangleEdges[i], boxNormals[j]);
-					m_Project(boxVertices, axis, out boxMin, out boxMax);
-					m_Project(triVerts, axis, out triangleMin, out triangleMax);
+					Project(boxVertices, axis, out boxMin, out boxMax);
+					Project(triVerts, axis, out triangleMin, out triangleMax);
 
 					if (boxMax < triangleMin || boxMin > triangleMax)
 						return;
@@ -90,7 +90,7 @@ namespace LMCollisionDev
 			// If we got this far, that means there's an intersection! Hooray!
 			AllIntersectingTris.Add(tri);
 
-			if (m_IsFloor(normal))
+			if (IsFloor(normal))
 				FloorIntersectingTris.Add(tri);
 		}
 
@@ -120,11 +120,11 @@ namespace LMCollisionDev
 			// If we got here, there is an intersection
 			AllIntersectingTris.Add(tri);
 
-			if (m_IsFloor(normals[tri.NormalIndex]))
+			if (IsFloor(normals[tri.NormalIndex]))
 				FloorIntersectingTris.Add(tri);
 		}
 
-		private void m_Project(List<Vector3> verts, Vector3 axis, out float min, out float max)
+		private void Project(List<Vector3> verts, Vector3 axis, out float min, out float max)
 		{
 			min = float.PositiveInfinity;
 			max = float.NegativeInfinity;
@@ -136,7 +136,7 @@ namespace LMCollisionDev
 			}
 		}
 
-		private bool m_IsFloor(Vector3 normal)
+		private bool IsFloor(Vector3 normal)
 		{
 			Vector3 upAxis = Vector3.UnitY;
 

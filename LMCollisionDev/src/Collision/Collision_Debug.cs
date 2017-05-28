@@ -6,7 +6,7 @@ namespace LMCollisionDev
 {
 	public partial class Collision
 	{
-		private void m_GenerateAllCells()
+		private void GenerateAllCells()
 		{
 			int xCellCount = (int)(Math.Floor(BBox.AxisLengths.X / 256) + 1);
 			int yCellCount = (int)(Math.Floor(BBox.AxisLengths.Y / 512) + 1);
@@ -84,7 +84,7 @@ namespace LMCollisionDev
 			}
 		}
 
-		private void m_GenerateFilledCells(EndianBinaryReader reader)
+		private void GenerateFilledCells(EndianBinaryReader reader)
 		{
 			StringWriter strWriter = new StringWriter();
 

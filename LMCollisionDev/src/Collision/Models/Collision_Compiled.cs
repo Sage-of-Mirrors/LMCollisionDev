@@ -11,7 +11,7 @@ namespace LMCollisionDev
 	{
 		#region Input
 
-		private void m_OpenCompiled(string fileName)
+		private void OpenCompiled(string fileName)
 		{
 			using (FileStream strm = new FileStream(fileName, FileMode.Open, FileAccess.Read))
 			{
@@ -94,7 +94,7 @@ namespace LMCollisionDev
 			string colPropsFileName = $" { jmpFolderName }\\polygoninfo";
 			if (File.Exists(colPropsFileName))
 			{
-				m_LoadCompiledColProperties(colPropsFileName);
+				LoadCompiledColProperties(colPropsFileName);
 			}
 			else
 			{
@@ -104,7 +104,7 @@ namespace LMCollisionDev
 			string sndPropsFileName = $" { jmpFolderName }\\soundpolygoninfo";
 			if (File.Exists(sndPropsFileName))
 			{
-				m_LoadCompiledSndProperties(sndPropsFileName);
+				LoadCompiledSndProperties(sndPropsFileName);
 			}
 			else
 			{
@@ -113,7 +113,7 @@ namespace LMCollisionDev
 			}
 		}
 
-		private void m_LoadCompiledColProperties(string fileName)
+		private void LoadCompiledColProperties(string fileName)
 		{
 			using (FileStream strm = new FileStream(fileName, FileMode.Open, FileAccess.Read))
 			{
@@ -134,7 +134,7 @@ namespace LMCollisionDev
 			}
 		}
 
-		private void m_LoadCompiledSndProperties(string fileName)
+		private void LoadCompiledSndProperties(string fileName)
 		{
 			using (FileStream strm = new FileStream(fileName, FileMode.Open, FileAccess.Read))
 			{
@@ -259,7 +259,7 @@ namespace LMCollisionDev
 				}
 
 				int xCellCount, yCellCount, zCellCount;
-				List<GridCell> grid = m_GenerateGrid(out xCellCount, out yCellCount, out zCellCount, vertexExport, normalizedExport);
+				List<GridCell> grid = GenerateGrid(out xCellCount, out yCellCount, out zCellCount, vertexExport, normalizedExport);
 
 				List<short> allTriangleIndexesForGrid = new List<short>();
 				List<int> gridTriangleIndexes = new List<int>();
@@ -368,7 +368,7 @@ namespace LMCollisionDev
 			{
 				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
 
-				m_WriteCompiledColPropertiesHeader(writer);
+				WriteCompiledColPropertiesHeader(writer);
 
 				foreach (Triangle tri in Triangles)
 					tri.WriteCompiledColProperties(writer);
@@ -381,7 +381,7 @@ namespace LMCollisionDev
 			{
 				EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
 
-				m_WriteCompiledSndPropertiesHeader(writer);
+				WriteCompiledSndPropertiesHeader(writer);
 
 				foreach (Triangle tri in Triangles)
 					tri.WriteCompiledSndProperties(writer);
@@ -390,7 +390,7 @@ namespace LMCollisionDev
 			}
 		}
 
-		private List<GridCell> m_GenerateGrid(out int xCellCount, out int yCellCount, out int zCellCount, List<Vector3> vertexExport, List<Vector3> normalExport)
+		private List<GridCell> GenerateGrid(out int xCellCount, out int yCellCount, out int zCellCount, List<Vector3> vertexExport, List<Vector3> normalExport)
 		{
 			List<GridCell> cells = new List<GridCell>();
 
@@ -434,7 +434,7 @@ namespace LMCollisionDev
 			return cells;
 		}
 
-		private void m_WriteCompiledColPropertiesHeader(EndianBinaryWriter writer)
+		private void WriteCompiledColPropertiesHeader(EndianBinaryWriter writer)
 		{
 			writer.Write(Triangles.Count);
 			writer.Write((int)3);
@@ -454,7 +454,7 @@ namespace LMCollisionDev
 			writer.Write((int)0x300);
 		}
 
-		private void m_WriteCompiledSndPropertiesHeader(EndianBinaryWriter writer)
+		private void WriteCompiledSndPropertiesHeader(EndianBinaryWriter writer)
 		{
 			writer.Write(Triangles.Count);
 			writer.Write((int)2);

@@ -10,7 +10,7 @@ namespace LMCollisionDev
 	{
 		#region Input
 
-		private void m_OpenModelFile(string fileName)
+		private void OpenModelFile(string fileName)
 		{
 			AssimpContext cont = new AssimpContext();
 			Scene scene;
@@ -25,10 +25,10 @@ namespace LMCollisionDev
 				throw new FormatException($"Failed to open file \"{ fileName }\". The file is either not a supported model file or corrupted.");
 			}
 
-			m_LoadModelFile(scene);
+			LoadModelFile(scene);
 		}
 
-		private void m_LoadModelFile(Scene scene)
+		private void LoadModelFile(Scene scene)
 		{
 			foreach (Mesh msh in scene.Meshes)
 			{

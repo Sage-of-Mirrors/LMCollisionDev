@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Newtonsoft.Json;
 using Assimp;
@@ -12,7 +12,7 @@ namespace LMCollisionDev
 	{
 		#region Input
 
-		private void m_OpenJson(string fileName)
+		private void OpenJson(string fileName)
 		{
 			using (StreamReader strmReader = File.OpenText(fileName))
 			{
