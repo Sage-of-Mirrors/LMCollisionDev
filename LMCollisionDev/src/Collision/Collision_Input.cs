@@ -52,6 +52,7 @@ namespace LMCollisionDev
 			}
 
 			BBox = new BoundingBox(Vertices);
+			CreateDisplaylist();
 		}
 	}
 }
